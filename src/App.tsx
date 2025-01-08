@@ -140,52 +140,71 @@ const BudgetPlanner = () => {
   };
 
   return (
-    <div className="space-y-4 p-4">
-      <Card>
-        <CardContent className="space-y-6">
-          {/* Import/Export buttons */}
-          <div className="flex justify-end space-x-2">
-            <label className="cursor-pointer bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 flex items-center space-x-2">
-              <Upload size={16} />
-              <span>Import</span>
-              <input
-                type="file"
-                accept=".json"
-                onChange={importData}
-                className="hidden"
-              />
-            </label>
-            <button
-              onClick={exportData}
-              className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 flex items-center space-x-2"
-            >
-              <Download size={16} />
-              <span>Export</span>
-            </button>
-          </div>
+// App.tsx - Header and Controls Section
+        <div className="min-h-screen bg-gray-50">
+          {/* Header */}
+          <header className="bg-white border-b border-gray-200 px-6 py-4">
+            <h1 className="text-2xl font-bold text-gray-900">Budget Planner</h1>
+            <p className="text-sm text-gray-600">Track and manage your monthly spending</p>
+          </header>
 
-          {/* Month Selection and Budget Input */}
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center space-x-4">
-              <button className="p-2"><ChevronLeft /></button>
-              <input
-                type="month"
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                className="border rounded p-2"
-              />
-              <button className="p-2"><ChevronRight /></button>
-            </div>
-            <div className="flex items-center space-x-4">
-              <label className="font-medium">Monthly Budget:</label>
-              <input
-                type="number"
-                value={monthlyBudget}
-                onChange={(e) => setMonthlyBudget(Number(e.target.value))}
-                className="border rounded p-2 w-32"
-              />
-            </div>
+          <Card>
+  <CardContent>
+    {/* Header with Controls */}
+    <div className="flex flex-col md:flex-row justify-between items-center mb-8 pb-6 border-b border-gray-200">
+      {/* Left: Month Selection */}
+      <div className="flex items-center space-x-3 mb-4 md:mb-0">
+        <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <ChevronLeft className="text-gray-600" />
+        </button>
+        <input
+          type="month"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+          className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <ChevronRight className="text-gray-600" />
+        </button>
+      </div>
+
+      {/* Right: Budget Input & Import/Export */}
+      <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-3">
+          <label className="font-medium text-gray-700">Monthly Budget:</label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+            <input
+              type="number"
+              value={monthlyBudget}
+              onChange={(e) => setMonthlyBudget(Number(e.target.value))}
+              className="pl-7 border border-gray-300 rounded-lg py-2 w-36 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <label className="inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors">
+            <Upload size={18} className="text-gray-600" />
+            <span className="text-gray-700">Import</span>
+            <input
+              type="file"
+              accept=".json"
+              onChange={importData}
+              className="hidden"
+            />
+          </label>
+          <button
+            onClick={exportData}
+            className="inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            <Download size={18} className="text-gray-600" />
+            <span className="text-gray-700">Export</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
 
           {/* Promotional Periods */}
           <div className="space-y-2">
@@ -238,12 +257,14 @@ const BudgetPlanner = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="bg-gray-100 font-medium">
-                    <td className="border p-2" colSpan={3}>Totals</td>
-                    <td className="border p-2 text-right">${totals.plannedTotal.toFixed(2)}</td>
-                    <td className="border p-2 text-right">${totals.actualTotal.toFixed(2)}</td>
-                    <td className="border p-2 text-right">${(totals.actualTotal - totals.plannedTotal).toFixed(2)}</td>
-                  </tr>
+                <tr className="bg-gray-100 font-medium">
+                  <td className="border p-2" colSpan={3}>Totals</td>
+                  <td className="border p-2 text-right">${totals.plannedTotal.toFixed(2)}</td>
+                  <td className="border p-2 text-right">${totals.actualTotal.toFixed(2)}</td>
+                  <td className="border p-2 text-right">${monthData.reduce((sum, day) => 
+                    day.actual !== null ? sum + (day.actual - day.planned) : sum, 0).toFixed(2)}</td>
+                </tr>
+
                   {monthData.map((day) => (
                     <tr key={day.date} className={day.isPromo ? 'bg-blue-50' : ''}>
                       <td className="border p-2">
